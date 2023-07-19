@@ -2,7 +2,7 @@ name: Check status
 
 on: 
   schedule:
-    - cron: '2 * * * *'
+    - cron: '*/2 * * * *'
 
 jobs:
   build:
