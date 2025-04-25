@@ -27,26 +27,26 @@ jobs:
           
           set -x
           echo ${{inputs.chart_type}}
-          # helm registry login ghcr.io/ --username ghataSaxena --password ${{ secrets.GH_BN_OLD_TOKEN }}
+          helm registry login ghcr.io/ --username ghataSaxena --password ${{ secrets.GH_BN_OLD_TOKEN }}
 
-          # curl -s -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GH_BN_OLD_TOKEN }}"  -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/orgs/bh-ent-tech/packages/container/${{inputs.container_name}}/versions?per_page=60 > versionList.txt
-          # cat versionList.txt | jq -r '[.[] ] | .[] .metadata .container .tags[]' > tags_list.txt
-          # current_year=`date +%y`
-          # previous_year=$((current_year-1))
-          # if [ ${{inputs.chart_type}} == 'true' ]; then
-          #     regex_pattern="^($current_year|$previous_year)(01|02|03|04).[0-9]*.(00)"
-          # else
-          #     regex_pattern="^($current_year|$previous_year).[0-9]*.[0-9]*"
-          # fi
-          #     for i in `cat tags_list.txt`; do 
-          #       echo $i; 
-          #       if [[ $i =~ $regex_pattern ]]; then 
-          #         latest_container_version=$i;
-          #         break; 
-          #         else 
-          #         echo "skip"; 
-          #       fi; 
-          #     done
+          curl -s -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GH_BN_OLD_TOKEN }}"  -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/orgs/bh-ent-tech/packages/container/${{inputs.container_name}}/versions?per_page=60 > versionList.txt
+          cat versionList.txt | jq -r '[.[] ] | .[] .metadata .container .tags[]' > tags_list.txt
+          current_year=`date +%y`
+          previous_year=$((current_year-1))
+          if [ ${{inputs.chart_type}} == 'true' ]; then
+              regex_pattern="^($current_year|$previous_year)(01|02|03|04).[0-9]*.(00)"
+          else
+              regex_pattern="^($current_year|$previous_year).[0-9]*.[0-9]*"
+          fi
+              for i in `cat tags_list.txt`; do 
+                echo $i; 
+                if [[ $i =~ $regex_pattern ]]; then 
+                  latest_container_version=$i;
+                  break; 
+                  else 
+                  echo "skip"; 
+                fi; 
+              done
             
-          # echo $latest_container_version
-          # echo "container_version=$latest_container_version" >> $GITHUB_OUTPUT
+          echo $latest_container_version
+          echo "container_version=$latest_container_version" >> $GITHUB_OUTPUT
