@@ -1,0 +1,65 @@
+{
+  "systems": [
+    {
+      "key": "ins",
+      "displayText": "Insights",
+      "title": "Insights",
+      "productName": "Insights",
+      "notifications": true,
+      "globalSearch": 0,
+      "help": 0,
+      "commonApp": 1,
+      "defaultApp": 1,
+      "default": true,
+      "orderOfMicroApps": 0
+    },
+    {
+      "key": "ahm",
+      "displayText": "Asset Health",
+      "displayTextI18Key": "assetHealth",
+      "title": "Asset Health",
+      "productName": "Asset Health",
+      "notifications": true,
+      "globalSearch": 1,
+      "help": 0,
+      "commonApp": 0,
+      "defaultApp": 0,
+      "orderOfMicroApps": 2
+    },
+    {
+      "key": "asm",
+      "displayText": "Asset Strategy",
+      "title": "Asset Strategy",
+      "productName": "Asset Strategy",
+      "notifications": true,
+      "globalSearch": 0,
+      "help": 0,
+      "commonApp": 1,
+      "defaultApp": 1,
+      "orderOfMicroApps": 1
+    },
+    {
+      "key": "ade",
+      "displayText": "Asset Defect Elimination",
+      "isExternal": true,
+      "url": 0
+    },
+    {
+      "key": "im",
+      "displayText": "Integrity Management",
+      "isExternal": true,
+      "url": 1
+    },
+    {
+      "key": "pro",
+      "displayText": "Process Optimization",
+      "title": "Process Optimization",
+      "productName": "Process Optimization",
+      "notifications": true,
+      "help": 1,
+      "commonApp": 0,
+      "defaultApp": 3,
+      "orderOfMicroApps": 4
+    }
+  ]
+}

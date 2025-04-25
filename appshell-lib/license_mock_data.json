@@ -1,0 +1,61 @@
+{
+  "httpStatusCode": 200,
+  "elapsedTimes": {
+    "apiElapsedTime": 24
+  },
+  "path": "v1/api/products/licenses",
+  "data": {
+    "availablePackages": [
+      {
+        "packageName": "Awareness",
+        "displayName": "Asset Health Awareness",
+        "startDate": "638723232000000000",
+        "issueDate": "638754336000000000",
+        "endDate": "640301759990000000",
+        "status": "Active"
+      },
+      {
+        "packageName": "Management",
+        "displayName": "Asset Health Management",
+        "startDate": "638723232000000000",
+        "issueDate": "638754336000000000",
+        "endDate": "640301759990000000",
+        "status": "Active"
+      },
+      {
+        "packageName": "Analytics",
+        "displayName": "Asset Health Analytics",
+        "startDate": "638501184000000000",
+        "issueDate": "638501184000000000",
+        "endDate": "638944415990000000",
+        "status": "Active"
+      },
+      {
+        "packageName": "ASM",
+        "displayName": "Asset Strategy",
+        "startDate": "638702496000000000",
+        "issueDate": "638702496000000000",
+        "endDate": "638992799990000000",
+        "status": "Active"
+      },
+      {
+        "packageName": "ADE",
+        "displayName": "Asset Defect Elimination",
+        "startDate": "638702496000000000",
+        "issueDate": "638702496000000000",
+        "endDate": "638992799990000000",
+        "status": "Active"
+      },
+      {
+        "packageName": "PO",
+        "displayName": "Process Optimization",
+        "startDate": "638712864000000000",
+        "issueDate": "638712864000000000",
+        "endDate": "639028223990000000",
+        "status": "Active"
+      }
+    ],
+    "unlicensedMessage": "UnlicensedMessage"
+  },
+  "errors": []
+}

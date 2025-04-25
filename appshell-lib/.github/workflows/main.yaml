@@ -1,0 +1,266 @@
+name: apm-appshell-lib
+
+on:
+  workflow_dispatch:
+    inputs:
+      chart_type:
+        description: 'Is it officially released chart? format yyyy.xx.0'
+        type: string
+        default: "true"
+  push:
+
+env:
+  dockerfilename: "${{ inputs.dockerfilename }}"
+  image_build: "static-files-app-shell"
+  registry_name: "ghcr.io/bh-ent-tech"
+  helm_registry_name: "oci://ghcr.io/bh-ent-tech/"
+
+
+
+jobs:
+    debug-step:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Set environment variables
+          id: set_bool_value
+          run: |
+            echo "chart_type=${{ inputs.chart_type || 'true' }}" >> $GITHUB_ENV
+        - name: Debug Input
+          run: |
+             echo "Caller Input: ${{ env.chart_type }}"
+      outputs:
+         chart_type: ${{ steps.set_bool_value.outputs.chart_type }}       
+
+    get_appshell_chart_version:
+      uses: industrial-solutions/apm-appshell-lib/.github/workflows/fetch_specific_container_version.yaml@test
+      secrets: inherit
+      with:
+        container_name: "app-shell"
+        chart_type: "${{needs.debug-step.outputs.chart_type}}"
+
+    # jobs_parameter:
+    #   needs: [ get_appshell_chart_version ]
+    #   runs-on: ubuntu-latest
+    #   steps:
+    #     - name: Checkout github repository
+    #       uses: actions/checkout@v4
+
+    #     - name: Initial Setup
+    #       run: |
+    #         sudo apt update
+    #         sudo apt install snapd
+    #         sudo snap install yq
+        
+    #     - name: Extract branch name
+    #       shell: bash
+    #       run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+    #       id: extract_branch
+        
+    #     - name: Set GitHub SHA Short
+    #       shell: bash
+    #       id: sha
+    #       run: echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
+
+    #     - name: SHA output
+    #       run: echo " Git SHA number >>>>>>>> ${{ steps.sha.outputs.sha_short }} "
+        
+    #     - name: Prerequisites to set the image version
+    #       id: image
+    #       run: |
+    #           chart_version=`echo ${{ needs.get_appshell_chart_version.outputs.container_version }}`
+    #           major_minor=`echo $chart_version | awk -F "." '{print $1}'`
+    #           major_version=${major_minor::2}
+    #           minor_version=${major_minor:2}
+    #           patch=`echo $chart_version | awk -F "." '{print $2}'`
+    #           echo "image_name=${{env.registry_name}}${{env.image_build}}:${major_version}.${minor_version}.${patch}.${{ steps.extract_branch.outputs.branch }}-${{ steps.sha.outputs.sha_short }}" >> $GITHUB_OUTPUT
+    #           echo "image_version=${major_version}.${minor_version}.${patch}.${{ steps.extract_branch.outputs.branch }}-${{ steps.sha.outputs.sha_short }}" >> $GITHUB_OUTPUT
+
+    #   outputs:
+    #     image_name: ${{ steps.image.outputs.image_name }}
+    #     image_version: ${{ steps.image.outputs.image_version }}
+    #     major_version: ${{ steps.major_version.outputs.major }}
+    #     minor_version: ${{ steps.minor_version.outputs.minor }}
+
+    # ci:
+    #   needs: [ get_appshell_chart_version, jobs_parameter ]
+    #   runs-on: 
+    #     group: linux
+        
+    #   steps:
+    #     - name: Checkout github repository
+    #       uses: actions/checkout@v4
+
+    #     - name: Login to GitHub Container Registry
+    #       uses: docker/login-action@v3
+    #       with:
+    #           registry: ghcr.io
+    #           username: shyam-ks
+    #           password: ${{ secrets.GH_BN_OLD_TOKEN }}
+              
+    #     - name: Docker Build and Push  
+    #       run: |
+    #         pwd && ls -la 
+    #         docker build  . --file Dockerfile -t ${{ env.registry_name }}/${{env.image_build}}:${{needs.jobs_parameter.outputs.image_version}} 
+    #         echo "PUSHING THE IMAGE >>>>>>>>>>>  ${{env.image_build}}:${{needs.jobs_parameter.outputs.image_version}}"
+    #         docker tag ${{ env.registry_name }}/${{env.image_build}}:${{needs.jobs_parameter.outputs.image_version}} ${{ env.registry_name }}/${{env.image_build}}:${{needs.jobs_parameter.outputs.image_version}}
+    #         docker push ${{ env.registry_name }}/${{env.image_build}}:${{needs.jobs_parameter.outputs.image_version}}
+    #         docker rmi ${{ env.registry_name }}/${{env.image_build}}:${{needs.jobs_parameter.outputs.image_version}}
+
+    #     - name: Install Cosign
+    #       uses: sigstore/cosign-installer@v3.7.0
+    #       with:
+    #         cosign-release: ${{ vars.COSIGN_VERSION }}
+
+    #     - name: Write signing key to disk (only needed for `cosign sign --key`)
+    #       run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
+
+    #     - name: Digitally sign image
+    #       run: |
+    #         printf %s "${COSIGN_SIGNING_PRIVATE_KEY}" > /tmp/cosign.key
+    #         cosign sign --key /tmp/cosign.key --tlog-upload=false ${{ env.registry_name }}/${{env.image_build}}:${{needs.jobs_parameter.outputs.image_version}}
+    #       env:
+    #         COSIGN_SIGNING_PRIVATE_KEY: ${{ secrets.cosign_signing_private_key }}
+    #         COSIGN_PASSWORD: ${{ secrets.cosign_password }}
+    
+
+
+    
+    # update_appshell_chart:
+    #   needs: [ get_appshell_chart_version, jobs_parameter, ci ]
+    #   runs-on: ubuntu-latest
+      
+    #   steps:
+    #     - name: Get noreply email address of actor
+    #       uses: actions/github-script@v7
+    #       id: my-script
+    #       with:
+    #         result-encoding: string
+    #         script: |
+    #           let user = await github.rest.users.getByUsername({
+    #             username: context.actor
+    #           });
+    #           return `${user.data.id}+${context.actor}@users.noreply.github.com`
+
+    #     - name: set git username and email
+    #       run: |
+    #         git config --global user.name "${{ github.actor }}"
+    #         git config --global user.email "${{ steps.my-script.outputs.result }}"
+
+    #     - name: Login to GHCR  
+    #       run: |
+    #         echo ${{ secrets.GH_BN_OLD_TOKEN }} | helm registry login ghcr.io -u shyam-ks --password-stdin
+
+    #     - name: Update appshell helm chart
+    #       id: helm_chart_version
+    #       run: |
+    #         set -x
+    #         echo ${{needs.get_appshell_chart_version.outputs.container_version}}
+    #         chart_name="app-shell"
+    #         chart_version=`echo ${{needs.get_appshell_chart_version.outputs.container_version}} | awk -F "-" '{print $1}'`
+    #         chart_minor_version=`echo ${{needs.get_appshell_chart_version.outputs.container_version}} | awk -F "." '{print $2}'`
+            
+
+    #         helm pull ${{env.helm_registry_name}}${chart_name} --version ${{needs.get_appshell_chart_version.outputs.container_version}} --untar
+
+    #         yq --prettyPrint -o=json ${chart_name}/values.yaml > ${chart_name}/values.json
+
+    #         tag=`cat ${chart_name}/values.json | jq -r ".static.tag"`
+    #         old_tag=$(echo $tag | tr -d ' ')
+    #         echo $old_tag
+    #         new_tag=`echo ${{needs.jobs_parameter.outputs.image_version}}`
+    #         echo $new_tag
+    #         echo $chart_minor_version
+
+    #         sed  -i "s/${old_tag}/${new_tag}/g" ${chart_name}/values.yaml
+
+    #         temp=`echo ${{needs.get_appshell_chart_version.outputs.container_version}} | awk -F "." '{print $1}'`
+    #         # new_chart_version=`echo $temp"."${{ github.run_number }}`
+    #         # new_minor_version=`printf "%04d\n" $minor_version`
+    #         new_chart_version=`echo $temp$chart_minor_version"."$chart_minor_version"."${{ github.run_number }}`
+
+    #         echo "helm_chart_version=${new_chart_version}" >> $GITHUB_OUTPUT
+    #         cat ${chart_name}/values.yaml
+    #         rm -rf ${chart_name}/values.json
+    #         helm package ${chart_name} --version ${new_chart_version}
+
+    #     - name: Publish new Version of Chart
+    #       if: github.ref == 'refs/heads/develop'
+    #       run: |
+    #         helm registry login ${{env.registry_name}} --username shyam-ks --password ${{ secrets.GH_BN_OLD_TOKEN }}
+    #         helmChart=`ls | grep ".tgz"`
+    #         helm push ${helmChart} ${{ env.helm_registry_name }}
+    #         echo "::notice:: Appshell Chart version is ${{ steps.helm_chart_version.outputs.helm_chart_version }}"
+
+    # get_keycloak_chart_version:
+    #   uses: industrial-solutions/apm-appshell-lib/.github/workflows/fetch_specific_container_version.yaml@test
+    #   secrets: inherit
+    #   with:
+    #     container_name: "keycloak"
+    #     chart_type: ${{inputs.chart_type}}
+
+    # update_keycloak_chart:
+    #   needs: [ jobs_parameter, ci, get_keycloak_chart_version ]
+    #   runs-on: ubuntu-latest
+      
+    #   steps:
+        
+    #     - name: Get noreply email address of actor
+    #       uses: actions/github-script@v7
+    #       id: my-script
+    #       with:
+    #         result-encoding: string
+    #         script: |
+    #           let user = await github.rest.users.getByUsername({
+    #             username: context.actor
+    #           });
+    #           return `${user.data.id}+${context.actor}@users.noreply.github.com`
+
+    #     - name: set git username and email
+    #       run: |
+    #         git config --global user.name "${{ github.actor }}"
+    #         git config --global user.email "${{ steps.my-script.outputs.result }}"
+
+    #     - name: Login to GHCR  
+    #       run: |
+    #         echo ${{ secrets.GH_BN_OLD_TOKEN }} | helm registry login ghcr.io -u shyam-ks --password-stdin
+
+    #     - name: Update keycloak helm chart
+    #       id: helm_chart_version
+    #       run: |
+    #         set -x
+    #         echo ${{needs.get_keycloak_chart_version.outputs.container_version}}
+    #         chart_name="keycloak"
+    #         chart_version=`echo ${{needs.get_keycloak_chart_version.outputs.container_version}} | awk -F "-" '{print $1}'`
+    #         chart_minor_version=`echo ${{needs.get_keycloak_chart_version.outputs.container_version}} | awk -F "." '{print $2}'`
+            
+
+    #         helm pull ${{env.helm_registry_name}}${chart_name} --version ${{needs.get_keycloak_chart_version.outputs.container_version}} --untar
+
+    #         yq --prettyPrint -o=json ${chart_name}/values.yaml > ${chart_name}/values.json
+
+    #         tag=`cat ${chart_name}/values.json | jq -r ".static.tag"`
+    #         old_tag=$(echo $tag | tr -d ' ')
+    #         echo $old_tag
+    #         new_tag=`echo ${{needs.jobs_parameter.outputs.image_version}}`
+    #         echo $new_tag
+    #         echo $chart_minor_version
+
+    #         sed  -i "s/${old_tag}/${new_tag}/g" ${chart_name}/values.yaml
+
+    #         temp=`echo ${{needs.get_keycloak_chart_version.outputs.container_version}} | awk -F "." '{print $1}'`
+    #         # new_chart_version=`echo $temp"."${{ github.run_number }}`
+    #         # new_minor_version=`printf "%04d\n" $minor_version`
+    #         new_chart_version=`echo $temp$chart_minor_version"."$chart_minor_version"."${{ github.run_number }}`
+
+    #         echo "helm_chart_version=${new_chart_version}" >> $GITHUB_OUTPUT
+    #         cat ${chart_name}/values.yaml
+    #         rm -rf ${chart_name}/values.json
+    #         helm package ${chart_name} --version ${new_chart_version}
+
+    #     - name: Publish new Version of Chart
+    #       if: github.ref == 'refs/heads/develop'
+    #       run: |
+    #         helm registry login ${{env.registry_name}} --username shyam-ks --password ${{ secrets.GH_BN_OLD_TOKEN }}
+    #         helmChart=`ls | grep ".tgz"`
+    #         helm push ${helmChart} ${{ env.helm_registry_name }}
+    #         echo "::notice:: Keycloak Chart version is ${{ steps.helm_chart_version.outputs.helm_chart_version }}"
