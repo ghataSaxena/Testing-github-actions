@@ -26,7 +26,7 @@ jobs:
         run: |
           
           set -x
-          helm registry login ghcr.io/ --username shyam-ks --password ${{ secrets.GH_BN_OLD_TOKEN }}
+          helm registry login ghcr.io/ --username ghataSaxena --password ${{ secrets.GH_BN_OLD_TOKEN }}
 
           curl -s -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GH_BN_OLD_TOKEN }}"  -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/orgs/bh-ent-tech/packages/container/${{inputs.container_name}}/versions?per_page=60 > versionList.txt
           cat versionList.txt | jq -r '[.[] ] | .[] .metadata .container .tags[]' > tags_list.txt

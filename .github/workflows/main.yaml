@@ -6,7 +6,7 @@ on:
       chart_type:
         description: 'Is it officially released chart? format yyyy.xx.0'
         type: string
-        default: "true"
+        default: 'true'
   push:
 
 env:
@@ -32,7 +32,7 @@ jobs:
          chart_type: ${{ steps.set_bool_value.outputs.chart_type }}       
 
     get_appshell_chart_version:
-      uses: industrial-solutions/apm-appshell-lib/.github/workflows/fetch_specific_container_version.yaml@test
+      uses: industrial-solutions/apm-appshell-lib/.github/workflows/fetch_specific_container_version.yaml@main
       secrets: inherit
       with:
         container_name: "app-shell"
@@ -94,7 +94,7 @@ jobs:
     #       uses: docker/login-action@v3
     #       with:
     #           registry: ghcr.io
-    #           username: shyam-ks
+    #           username: ghataSaxena
     #           password: ${{ secrets.GH_BN_OLD_TOKEN }}
               
     #     - name: Docker Build and Push  
@@ -148,7 +148,7 @@ jobs:
 
     #     - name: Login to GHCR  
     #       run: |
-    #         echo ${{ secrets.GH_BN_OLD_TOKEN }} | helm registry login ghcr.io -u shyam-ks --password-stdin
+    #         echo ${{ secrets.GH_BN_OLD_TOKEN }} | helm registry login ghcr.io -u ghataSaxena --password-stdin
 
     #     - name: Update appshell helm chart
     #       id: helm_chart_version
@@ -186,13 +186,13 @@ jobs:
     #     - name: Publish new Version of Chart
     #       if: github.ref == 'refs/heads/develop'
     #       run: |
-    #         helm registry login ${{env.registry_name}} --username shyam-ks --password ${{ secrets.GH_BN_OLD_TOKEN }}
+    #         helm registry login ${{env.registry_name}} --username ghataSaxena --password ${{ secrets.GH_BN_OLD_TOKEN }}
     #         helmChart=`ls | grep ".tgz"`
     #         helm push ${helmChart} ${{ env.helm_registry_name }}
     #         echo "::notice:: Appshell Chart version is ${{ steps.helm_chart_version.outputs.helm_chart_version }}"
 
     # get_keycloak_chart_version:
-    #   uses: industrial-solutions/apm-appshell-lib/.github/workflows/fetch_specific_container_version.yaml@test
+    #   uses: industrial-solutions/apm-appshell-lib/.github/workflows/fetch_specific_container_version.yaml@main
     #   secrets: inherit
     #   with:
     #     container_name: "keycloak"
@@ -222,7 +222,7 @@ jobs:
 
     #     - name: Login to GHCR  
     #       run: |
-    #         echo ${{ secrets.GH_BN_OLD_TOKEN }} | helm registry login ghcr.io -u shyam-ks --password-stdin
+    #         echo ${{ secrets.GH_BN_OLD_TOKEN }} | helm registry login ghcr.io -u ghataSaxena --password-stdin
 
     #     - name: Update keycloak helm chart
     #       id: helm_chart_version
@@ -260,7 +260,7 @@ jobs:
     #     - name: Publish new Version of Chart
     #       if: github.ref == 'refs/heads/develop'
     #       run: |
-    #         helm registry login ${{env.registry_name}} --username shyam-ks --password ${{ secrets.GH_BN_OLD_TOKEN }}
+    #         helm registry login ${{env.registry_name}} --username ghataSaxena --password ${{ secrets.GH_BN_OLD_TOKEN }}
     #         helmChart=`ls | grep ".tgz"`
     #         helm push ${helmChart} ${{ env.helm_registry_name }}
     #         echo "::notice:: Keycloak Chart version is ${{ steps.helm_chart_version.outputs.helm_chart_version }}"
