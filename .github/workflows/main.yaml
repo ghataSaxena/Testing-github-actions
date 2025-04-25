@@ -24,10 +24,10 @@ jobs:
         - name: Set environment variables
           id: set_bool_value
           run: |
-            echo "chart_type=${{ inputs.chart_type || 'true' }}" >> $GITHUB_ENV
+            echo "chart_type=${{ inputs.chart_type || 'true' }}" >> $GITHUB_OUTPUT
         - name: Debug Input
           run: |
-             echo "Caller Input: ${{ env.chart_type }}"
+             echo "Caller Input: ${{ steps.set_bool_value.outputs.chart_type }}"
       outputs:
          chart_type: ${{ steps.set_bool_value.outputs.chart_type }}       
 
