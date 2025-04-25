@@ -32,7 +32,7 @@ jobs:
          chart_type: ${{ steps.set_bool_value.outputs.chart_type }}       
 
     get_appshell_chart_version:
-      uses: bh-ent-tech/Testing-github-actions/.github/workflows/fetch_specific_container_version.yaml@main
+      uses: ghataSaxena/Testing-github-actions/.github/workflows/fetch_specific_container_version.yaml@main
       secrets: inherit
       with:
         container_name: "app-shell"
