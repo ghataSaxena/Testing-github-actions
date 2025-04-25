@@ -8,8 +8,8 @@ on:
         type: string
       chart_type:
         required: true
-        type: boolean
-        default: true
+        type: string
+        default: 'true'
     outputs:
       container_version:
         value: ${{ jobs.fetch_version.outputs.output1 }}
