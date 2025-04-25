@@ -18,34 +18,23 @@ env:
 
 
 jobs:
-    debug_step:
+    set_input:
       runs-on: ubuntu-latest
       steps:
         - name: Set environment variables
           id: set_bool_value
           run: |
             echo "chart_type=${{ inputs.chart_type || 'true'}}" >> $GITHUB_OUTPUT
-        - name: Debug Input
-          run: |
-             echo "Caller Input: ${{ steps.set_bool_value.outputs.chart_type }}"
       outputs:
          chart_type: ${{ steps.set_bool_value.outputs.chart_type }}       
-    
-    test_value:
-      needs: [ debug_step ]
-      runs-on: ubuntu-latest
-      steps:
-        - name: Debug Input
-          run: |
-             echo "Input: ${{needs.debug_step.outputs.chart_type}}"
 
     get_appshell_chart_version:
-      needs: [ debug_step ]
+      needs: [ set_input ]
       uses: ghataSaxena/Testing-github-actions/.github/workflows/fetch_specific_container_version.yaml@main
       secrets: inherit
       with:
         container_name: "app-shell"
-        chart_type: "${{needs.debug_step.outputs.chart_type}}"
+        chart_type: "${{needs.set_input.outputs.chart_type}}"
 
     # jobs_parameter:
     #   needs: [ get_appshell_chart_version ]
