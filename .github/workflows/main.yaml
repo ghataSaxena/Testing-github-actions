@@ -32,6 +32,7 @@ jobs:
          chart_type: ${{ steps.set_bool_value.outputs.chart_type }}       
     
     test_value:
+      needs: [ debug_step ]
       runs-on: ubuntu-latest
       steps:
         - name: Debug Input
@@ -39,6 +40,7 @@ jobs:
              echo "Input: ${{needs.debug_step.outputs.chart_type}}"
 
     get_appshell_chart_version:
+      needs: [ debug_step ]
       uses: ghataSaxena/Testing-github-actions/.github/workflows/fetch_specific_container_version.yaml@main
       secrets: inherit
       with:
