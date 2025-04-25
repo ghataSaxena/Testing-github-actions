@@ -34,9 +34,9 @@ jobs:
           current_year=`date +%y`
           previous_year=$((current_year-1))
           if [ ${{inputs.chart_type}} == 'true' ]; then
-              regex_pattern="^($current_year|$previous_year)(01|02|03|04).[0-9]*.(00)"
+              regex_pattern="^($current_year|$previous_year)(01|02|03|04)+.[0-9]*+.(00)"
           else
-              regex_pattern="^($current_year|$previous_year)+[.][0-9]*.[0-9]*"
+              regex_pattern="^($current_year|$previous_year)+.[0-9]*+.[0-9]*"
           fi
               for i in `cat tags_list.txt`; do 
                 echo $i; 
